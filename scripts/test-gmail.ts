@@ -2,8 +2,7 @@ import { corsair } from "../src/server/corsair";
 
 async function main() {
   const emails = await corsair.gmail.api.messages.list({
-    maxResults: 10,
-    q: "is:unread",
+    maxResults: 10
   });
 
   const id = emails.messages?.[0]?.id;
