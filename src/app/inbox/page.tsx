@@ -1,9 +1,10 @@
 import { AppShell } from "@/components/layout/app-shell";
+import InboxWorkspace from "@/components/inbox/InboxWorkspace";
 
 export default function InboxPage() {
   return (
     <AppShell>
-      <h1 className="text-4xl font-bold">Inbox</h1>
+      <InboxWorkspace />
     </AppShell>
   );
 }
