@@ -23,18 +23,38 @@ type AgentData = {
 export default function ExecutiveBrief() {
   const [data, setData] = useState<AgentData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    async function loadBrief() {
-      const res = await fetch("/api/brief");
-      const json = await res.json();
+ async function loadBrief() {
+   const res = await fetch("/api/brief");
+   const json = await res.json();
 
-      setData(json);
-      setLoading(false);
+   setData(json);
+ }
+
+  async function refreshBrief() {
+    setRefreshing(true);
+
+    try {
+      await fetch("/api/brief/refresh", {
+        method: "POST",
+      });
+
+      await loadBrief();
+    } finally {
+      setRefreshing(false);
     }
+  }
 
-    loadBrief();
-  }, []);
+ useEffect(() => {
+   void (async () => {
+     const res = await fetch("/api/brief");
+     const json = await res.json();
+
+     setData(json);
+     setLoading(false);
+   })();
+ }, []);
 
   if (loading) {
     return (
@@ -55,7 +75,13 @@ export default function ExecutiveBrief() {
           </p>
         </div>
 
-        <span className="text-sm text-zinc-500">Generated just now</span>
+        <button
+          onClick={refreshBrief}
+          disabled={refreshing}
+          className="rounded-xl border border-violet-500/20 px-4 py-2 text-sm text-violet-300 transition hover:bg-violet-500/10 disabled:opacity-50"
+        >
+          {refreshing ? "Refreshing..." : "Refresh Brief"}
+        </button>
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-3">

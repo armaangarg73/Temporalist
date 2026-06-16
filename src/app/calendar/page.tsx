@@ -1,9 +1,13 @@
 import { AppShell } from "@/components/layout/app-shell";
+import CalendarHeader from "@/components/calendar/CalendarHeader";
+import MeetingList from "@/components/calendar/MeetingList";
 
 export default function CalendarPage() {
   return (
     <AppShell>
-      <h1 className="text-4xl font-bold">Calendar</h1>
+      <CalendarHeader />
+
+      <MeetingList />
     </AppShell>
   );
 }
