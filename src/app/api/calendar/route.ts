@@ -1,12 +1,30 @@
+import { auth } from "@/auth";
 import { corsair } from "@/server/corsair";
 
 export async function GET() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json(
+      {
+        error: "Unauthorized",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+
+  const userId = session.user.id;
+
+  const tenant = corsair.withTenant(userId);
+
   const now = new Date();
 
   const nextWeek = new Date();
   nextWeek.setDate(now.getDate() + 7);
 
-  const events = await corsair.googlecalendar.api.events.getMany({
+  const events = await tenant.googlecalendar.api.events.getMany({
     calendarId: "primary",
     timeMin: now.toISOString(),
     timeMax: nextWeek.toISOString(),

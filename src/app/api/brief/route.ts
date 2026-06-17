@@ -1,18 +1,49 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json(
+      {
+        error: "Unauthorized",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+
+  const userId = session.user.id;
+
   const brief = await prisma.executiveBrief.findFirst({
+    where: {
+      userId,
+    },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  return Response.json(
-    brief?.data ?? {
-      emails: [],
-      meetings: [],
-      urgentItems: [],
-      recommendedActions: [],
-    },
-  );
+  const meetings = (brief?.data as any)?.meetings ?? [];
+  const emails = (brief?.data as any)?.emails ?? [];
+  const urgentItems = (brief?.data as any)?.urgentItems ?? [];
+  const recommendedActions = (brief?.data as any)?.recommendedActions ?? [];
+
+  const now = new Date();
+
+  const nextMeeting =
+    meetings.find((meeting: any) => {
+      const start = meeting.start?.dateTime || meeting.start?.date;
+      return start && new Date(start) > now;
+    }) ?? null;
+
+  return Response.json({
+    emails,
+    meetings,
+    urgentItems,
+    recommendedActions,
+    nextMeeting,
+  });
 }

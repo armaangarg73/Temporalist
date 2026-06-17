@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { auth } from "@/auth";
 import { corsair } from "@/server/corsair";
 import { prisma } from "@/lib/prisma";
 
@@ -11,11 +12,22 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+
     const { id } = await params;
 
     const existingInsight = await prisma.emailInsight.findUnique({
       where: {
-        emailId: id,
+        userId_emailId: {
+          userId,
+          emailId: id,
+        },
       },
     });
 
@@ -26,7 +38,9 @@ export async function GET(
       });
     }
 
-    const email = await corsair.gmail.api.messages.get({
+    const tenant = corsair.withTenant(userId);
+
+    const email = await tenant.gmail.api.messages.get({
       id,
       format: "full",
     });
@@ -53,12 +67,16 @@ ${JSON.stringify(email)}
 
     await prisma.emailInsight.upsert({
       where: {
-        emailId: id,
+        userId_emailId: {
+          userId,
+          emailId: id,
+        },
       },
       update: {
         reply,
       },
       create: {
+        userId,
         emailId: id,
         reply,
       },
@@ -66,6 +84,7 @@ ${JSON.stringify(email)}
 
     await prisma.activity.create({
       data: {
+        userId,
         type: "reply_generated",
         title: "AI Reply Generated",
         description: email.snippet ?? "",
@@ -80,8 +99,12 @@ ${JSON.stringify(email)}
     console.error(error);
 
     return Response.json(
-      { error: "Failed to generate reply" },
-      { status: 500 },
+      {
+        error: "Failed to generate reply",
+      },
+      {
+        status: 500,
+      },
     );
   }
 }

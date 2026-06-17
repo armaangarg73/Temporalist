@@ -4,8 +4,10 @@ import ProfileCard from "@/components/settings/ProfileCard";
 import ConnectedServices from "@/components/settings/ConnectedServices";
 import AIPreferences from "@/components/settings/AIPreferences";
 import DangerZone from "@/components/settings/DangerZone";
+import {requireAuth} from "@/lib/require-auth";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  await requireAuth();
   return (
     <AppShell>
       <div className="mx-auto max-w-5xl">

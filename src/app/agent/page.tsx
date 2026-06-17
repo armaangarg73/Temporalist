@@ -7,8 +7,10 @@ import AgentRecommendations from "@/components/agent/AgentRecommendations";
 import NextMeetingCard from "@/components/agent/NextMeetingCard";
 import InboxSummary from "@/components/agent/InboxSummary";
 import QuickActions from "@/components/agent/QuickActions";
+import { requireAuth } from "@/lib/require-auth";
 
-export default function AgentPage() {
+export default async function AgentPage() {
+  await requireAuth();
   return (
     <AppShell>
       <div className="mx-auto max-w-7xl space-y-8">

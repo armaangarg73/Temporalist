@@ -1,13 +1,22 @@
 import OpenAI from "openai";
 import { getExecutiveBriefData } from "./executive-brief";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function generateExecutiveBrief() {
-  const data = await getExecutiveBriefData();
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const userId = session.user.id;
+
+  const data = await getExecutiveBriefData(userId);
 
   const response = await openai.responses.create({
     model: "gpt-4o-mini",
@@ -22,7 +31,8 @@ Return ONLY raw JSON.
   "urgentItems": ["string"],
   "recommendedActions": ["string"]
 }
-  Rules:
+
+Rules:
 - Return at least 1 urgent item if a deadline,
   application, offer expiration,
   or time-sensitive opportunity exists.
@@ -35,14 +45,6 @@ ${JSON.stringify(data.emails)}
 Calendar:
 ${JSON.stringify(data.events.items)}
 `,
-  });
-
-  await prisma.activity.create({
-    data: {
-      type: "brief_generated",
-      title: "Executive Brief Generated",
-      description: `AI analyzed ${data.emails.length} emails and ${data.events.items?.length ?? 0} calendar events`,
-    },
   });
 
   const cleaned = response.output_text
@@ -67,7 +69,19 @@ ${JSON.stringify(data.events.items)}
 
   await prisma.executiveBrief.create({
     data: {
+      userId,
       data: result,
+    },
+  });
+
+  await prisma.activity.create({
+    data: {
+      userId,
+      type: "brief_generated",
+      title: "Executive Brief Generated",
+      description: `AI analyzed ${data.emails.length} emails and ${
+        data.events.items?.length ?? 0
+      } calendar events`,
     },
   });
 

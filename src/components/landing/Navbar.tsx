@@ -27,12 +27,21 @@ export default function Navbar() {
           </a>
         </nav>
 
-        <Link
-          href="/dashboard"
-          className="rounded-xl bg-violet-600 px-5 py-2.5 font-medium transition hover:bg-violet-500"
-        >
-          Dashboard
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="rounded-xl border border-zinc-700 px-5 py-2.5 text-sm font-medium transition hover:border-zinc-600 hover:bg-zinc-900"
+          >
+            Sign In
+          </Link>
+
+          <Link
+            href="/register"
+            className="rounded-xl bg-violet-600 px-5 py-2.5 font-medium transition hover:bg-violet-500"
+          >
+            Get Started
+          </Link>
+        </div>
       </div>
     </header>
   );

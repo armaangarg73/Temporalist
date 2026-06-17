@@ -1,4 +1,6 @@
-import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+import { corsair } from "@/server/corsair";
+import { decode } from "he";
 
 type Props = {
   params: Promise<{
@@ -7,35 +9,43 @@ type Props = {
 };
 
 export async function GET(request: Request, { params }: Props) {
-  const { id } = await params;
+  const session = await auth();
 
-  const email = await prisma.email.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      subject: true,
-      from: true,
-      snippet: true,
-    },
-  });
-
-  if (!email) {
+  if (!session?.user?.id) {
     return Response.json(
       {
-        error: "Email not found",
+        error: "Unauthorized",
       },
       {
-        status: 404,
+        status: 401,
       },
     );
   }
 
+  const { id } = await params;
+
+  const tenant = corsair.withTenant(session.user.id);
+
+  const email = await tenant.gmail.api.messages.get({
+    id,
+    format: "metadata",
+  });
+
+  const headers = email.payload?.headers ?? [];
+
+ const subject = decode(
+   headers.find((h) => h.name === "Subject")?.value ?? "No Subject",
+ );
+
+ const from = decode(
+   headers.find((h) => h.name === "From")?.value ?? "Unknown Sender",
+ );
+
   return Response.json({
-    id: email.id,
-    subject: email.subject,
-    from: email.from,
-    body: email.snippet,
+    id,
+    subject,
+    from,
+    body: decode(email.snippet ?? ""),
+    raw: email,
   });
 }

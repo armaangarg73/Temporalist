@@ -51,7 +51,7 @@ export default function CTA() {
 
             <div className="mt-12 flex flex-col items-center justify-center gap-5 sm:flex-row">
               <Link
-                href="/dashboard"
+                href="/register"
                 className="group flex items-center gap-3 rounded-2xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-violet-500 hover:shadow-[0_0_35px_rgba(124,58,237,0.5)]"
               >
                 Get Started

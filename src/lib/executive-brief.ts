@@ -1,18 +1,19 @@
 import { corsair } from "@/server/corsair";
 
-export async function getExecutiveBriefData() {
-  const emails = await corsair.gmail.api.messages.list({
+export async function getExecutiveBriefData(userId: string) {
+
+  const tenant = corsair.withTenant(userId);
+
+  const emails = await tenant.gmail.api.messages.list({
     maxResults: 5,
   });
 
   const emailSummaries = [];
 
   for (const message of emails.messages ?? []) {
-    if (!message.id) {
-      continue;
-    }
+    if (!message.id) continue;
 
-    const email = await corsair.gmail.api.messages.get({
+    const email = await tenant.gmail.api.messages.get({
       id: message.id,
       format: "full",
     });
@@ -20,7 +21,8 @@ export async function getExecutiveBriefData() {
     const headers = email.payload?.headers ?? [];
 
     const subject =
-      headers.find((h) => h.name == "Subject")?.value ?? "No subject";
+      headers.find((h) => h.name === "Subject")?.value ?? "No subject";
+
     const from =
       headers.find((h) => h.name === "From")?.value ?? "Unknown Sender";
 
@@ -32,7 +34,6 @@ export async function getExecutiveBriefData() {
   }
 
   const tomorrow = new Date();
-
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const start = new Date(tomorrow);
@@ -41,7 +42,7 @@ export async function getExecutiveBriefData() {
   const end = new Date(tomorrow);
   end.setHours(23, 59, 59, 999);
 
-  const events = await corsair.googlecalendar.api.events.getMany({
+  const events = await tenant.googlecalendar.api.events.getMany({
     calendarId: "primary",
     timeMin: start.toISOString(),
     timeMax: end.toISOString(),
