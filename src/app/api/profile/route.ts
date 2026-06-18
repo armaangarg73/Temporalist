@@ -66,10 +66,10 @@ export async function GET() {
     };
   });
 
-  activityHistory.forEach((activity) => {
+  activityHistory.forEach((activity: any) => {
     const key = activity.createdAt.toISOString().slice(0, 10);
 
-    const day = last7Days.find((d) => d.key === key);
+    const day = last7Days.find((d:any) => d.key === key);
 
     if (day) {
       day.count++;
@@ -86,7 +86,7 @@ export async function GET() {
 
   const dayCounts: Record<string, number> = {};
 
-  activityHistory.forEach((activity) => {
+  activityHistory.forEach((activity: any) => {
     const day = activity.createdAt.toLocaleDateString("en-IN", {
       weekday: "long",
     });
