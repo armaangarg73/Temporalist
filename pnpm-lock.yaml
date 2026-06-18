@@ -19,7 +19,7 @@ importers:
         version: 0.1.4(@types/node@20.19.43)(corsair@0.1.76)(zod@4.4.3)
       '@corsair-dev/mcp':
         specifier: ^0.1.22
-        version: 0.1.22(@openai/agents@0.11.6(ws@8.21.0)(zod@4.4.3))(openai@6.42.0(ws@8.21.0)(zod@4.4.3))
+        version: 0.1.22(@openai/agents@0.11.6(ws@8.21.0)(zod@4.4.3))(openai@6.44.0(ws@8.21.0)(zod@4.4.3))
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.79.0(react@19.2.4))
@@ -71,6 +71,9 @@ importers:
       next-auth:
         specifier: ^5.0.0-beta.31
         version: 5.0.0-beta.31(next@16.2.9(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+      openai:
+        specifier: ^6.44.0
+        version: 6.44.0(ws@8.21.0)(zod@4.4.3)
       pg:
         specifier: ^8.21.0
         version: 8.21.0
@@ -4469,6 +4472,17 @@ packages:
       zod:
         optional: true
 
+  openai@6.44.0:
+    resolution: {integrity: sha512-09/gH+8jH0RgUwsgWHAaxsKGRT5zVZ95IaJUnqAWj6XejIBmnFRwq2WUIF37VtDEsmGrtPmvCs5+yBSeZGWvkA==}
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -5893,7 +5907,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@corsair-dev/mcp@0.1.22(@openai/agents@0.11.6(ws@8.21.0)(zod@4.4.3))(openai@6.42.0(ws@8.21.0)(zod@4.4.3))':
+  '@corsair-dev/mcp@0.1.22(@openai/agents@0.11.6(ws@8.21.0)(zod@4.4.3))(openai@6.44.0(ws@8.21.0)(zod@4.4.3))':
     dependencies:
       '@modelcontextprotocol/sdk': 1.29.0(zod@4.4.3)
       corsair: 0.1.75
@@ -5901,7 +5915,7 @@ snapshots:
       zod: 4.4.3
     optionalDependencies:
       '@openai/agents': 0.11.6(ws@8.21.0)(zod@4.4.3)
-      openai: 6.42.0(ws@8.21.0)(zod@4.4.3)
+      openai: 6.44.0(ws@8.21.0)(zod@4.4.3)
     transitivePeerDependencies:
       - '@cfworker/json-schema'
       - postgres
@@ -10440,6 +10454,11 @@ snapshots:
       wsl-utils: 0.3.1
 
   openai@6.42.0(ws@8.21.0)(zod@4.4.3):
+    optionalDependencies:
+      ws: 8.21.0
+      zod: 4.4.3
+
+  openai@6.44.0(ws@8.21.0)(zod@4.4.3):
     optionalDependencies:
       ws: 8.21.0
       zod: 4.4.3
