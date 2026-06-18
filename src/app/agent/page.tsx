@@ -8,6 +8,7 @@ import NextMeetingCard from "@/components/agent/NextMeetingCard";
 import InboxSummary from "@/components/agent/InboxSummary";
 import QuickActions from "@/components/agent/QuickActions";
 import { requireAuth } from "@/lib/require-auth";
+import AgentChat from "@/components/agent/AgentChat"
 
 export default async function AgentPage() {
   await requireAuth();
@@ -28,7 +29,13 @@ export default async function AgentPage() {
 
         <InboxSummary />
 
-        <QuickActions />
+        <div className="grid gap-6 xl:grid-cols-3">
+          <div className="xl:col-span-2">
+            <AgentChat />
+          </div>
+
+          <QuickActions />
+        </div>
       </div>
     </AppShell>
   );

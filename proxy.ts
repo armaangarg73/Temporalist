@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export const proxy = auth((req) => {
-  console.log("🔥 Proxy:", req.nextUrl.pathname);
+
 
   const isLoggedIn = !!req.auth;
 

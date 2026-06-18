@@ -33,20 +33,12 @@ export async function getExecutiveBriefData(userId: string) {
     });
   }
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const start = new Date(tomorrow);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(tomorrow);
-  end.setHours(23, 59, 59, 999);
-
-  const events = await tenant.googlecalendar.api.events.getMany({
-    calendarId: "primary",
-    timeMin: start.toISOString(),
-    timeMax: end.toISOString(),
-  });
+const events = await tenant.googlecalendar.api.events.getMany({
+  calendarId: "primary",
+  singleEvents: true,
+  orderBy: "startTime",
+  maxResults: 10,
+});
 
   return {
     emails: emailSummaries,
