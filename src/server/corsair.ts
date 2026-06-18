@@ -1,4 +1,4 @@
-import "dotenv/config";
+
 import { Pool } from "pg";
 import { PrismaClient } from "@prisma/client";
 import { createCorsair } from "corsair";
