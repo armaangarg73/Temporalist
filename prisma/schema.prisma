@@ -8,40 +8,36 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(cuid())
-  name           String?
-  email          String   @unique
-  passwordHash   String?
-  image          String?
-  emailVerified  DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  accounts Account[]
-  sessions Session[]
-
-  executiveBriefs ExecutiveBrief[]
+  id              String           @id @default(cuid())
+  email           String           @unique
+  createdAt       DateTime         @default(now())
+  emailVerified   DateTime?
+  image           String?
+  name            String?
+  passwordHash    String?
+  updatedAt       DateTime         @updatedAt
+  accounts        Account[]
   activities      Activity[]
   emails          Email[]
   emailInsights   EmailInsight[]
+  executiveBriefs ExecutiveBrief[]
+  sessions        Session[]
 }
+
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-
-  refresh_token String?
-  access_token  String?
-  expires_at    Int?
-  token_type    String?
-  scope         String?
-  id_token      String?
-  session_state String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -51,14 +47,13 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
   identifier String
-  token String @unique
-  expires DateTime
+  token      String   @unique
+  expires    DateTime
 
   @@unique([identifier, token])
 }
@@ -116,58 +111,47 @@ model CorsairEvent {
 
   @@map("corsair_events")
 }
+
 model Activity {
   id          String   @id @default(cuid())
-
-  userId      String?
-  user        User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   type        String
   title       String
   description String?
-
   createdAt   DateTime @default(now())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ExecutiveBrief {
   id        String   @id @default(cuid())
-
-  userId    String?
-  user      User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   data      Json
-
   createdAt DateTime @default(now())
-}
-model EmailInsight {
-  id        String @id @default(cuid())
-
   userId    String?
-  user      User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
+model EmailInsight {
+  id        String   @id @default(cuid())
   emailId   String
-
   summary   String?
   reply     String?
   tasks     Json?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, emailId])
 }
 
 model Email {
-  id        String @id
-
-  userId    String?
-  user      User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id        String   @id
   subject   String
   from      String
   snippet   String
   body      String?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
